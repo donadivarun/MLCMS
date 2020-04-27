@@ -16,12 +16,12 @@ class System:
         self.target = None
         self.obstacle = []
         
-    def add_pedastrian(pedastrian):
+    def add_pedastrian(self, pedastrian):
         #mark a pedastrian in the grid 
         self.grid[pedastrian[0]][pedastrian[1]].state = 1
         self.pedastrian.append(pedastrian)
         
-    def remove_pedastrian(pedastrian):
+    def remove_pedastrian(self, pedastrian):
         #remove a pedastrian from the grid 
         if self.pedastrian has pedastrian:
             self.grid[pedastrian[0]][pedastrian[1]].state = 0
@@ -29,21 +29,21 @@ class System:
         else:
             print("No pedastrian found!")
         
-    def add_target(target):
+    def add_target(self, target):
         #set the target of the grid, limit of 1 target
         if self.target is not none:
             self.grid[self.target[0]][self.target[1]].state = 0
         self.target = target
         self.grid[target[0]][target[1]].state = 2
         
-    def remove_target(target = self.target):
+    def remove_target(self, target = self.target):
         #remove the target from the grid
         if self.target == target:
             self.target = None
         else:
             print("No such target found!")
         
-    def add_obstacle(obs):
+    def add_obstacle(self, obs):
         #add obstacle in the grid
         self.grid[obs[0]][obs[1]].state = 3
         self.obstacle.append(obs)
