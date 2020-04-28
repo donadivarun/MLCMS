@@ -99,7 +99,7 @@ class Cell:
         self.visited = True
         
     def set_previous(self, cell):
-        self.previous_cell = cell
+        self.next_cell = cell
         
         
 def get_weight(cell: Cell):
