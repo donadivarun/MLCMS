@@ -2,6 +2,7 @@
 # coding: utf-8
 
 
+
 import heapq
 import math
 import sys
@@ -13,9 +14,11 @@ TARGET = 'YELLOW'
 OBSTACLE = 'BLACK'
 
 
+
 class System:
     #A collection of cells
     def __init__(self, rows, cols):
+
         self.rows = rows
         self.cols = cols
         self.grid = [[Cell(i, j) for i in range(rows)] for j in range(cols)]
@@ -35,14 +38,17 @@ class System:
             self.pedestrian.remove(pedestrian)
         else:
             print("No pedestrian found!")
+
         
     def add_target(self, target):
         #set the target of the grid, limit of 1 target
         if self.target is not None:
+
             self.grid[self.target[0]][self.target[1]].state = EMPTY
         self.target = target
         self.grid[target[0]][target[1]].state = TARGET
         return self.grid[target[0]][target[1]]
+
         
     def remove_target(self, target = None):
         #remove the target from the grid
@@ -56,6 +62,7 @@ class System:
         
     def add_obstacle(self, obs):
         #add obstacle in the grid
+
         self.grid[obs[0]][obs[1]].state = OBSTACLE
         self.obstacle.append(obs)
         
@@ -170,4 +177,5 @@ def evaluate_cell_distance(system: System, target: Cell):
                 if not cell.visited:
                     unvisited_queue.append((cell.get_distance(), cell))
         heapq.heapify(unvisited_queue)
+
 
