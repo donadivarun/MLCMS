@@ -98,6 +98,9 @@ class Cell:
     def set_visited(self):
         self.visited = True
         
+    def set_previous(self, cell):
+        self.previous_cell = cell
+        
         
 def get_weight(cell: Cell):
     if cell.state == OBSTACLE:
