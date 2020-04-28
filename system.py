@@ -6,7 +6,6 @@ import heapq
 import math
 import sys
 from enum import Enum
-from typing import Union, Tuple
 
 EMPTY = 'WHITE'
 PEDESTRIAN = 'RED'
