@@ -174,10 +174,10 @@ def evaluate_cell_distance(system: System, target: Cell):
 
 
 
-class fmm(system):
+class fmm:
     #params: system -> grid style layout with pedestrians/obstacles and targets.
 
-    def __init__():
+    def __init__(system):
         self.t_grid = [[(sys.maxsize) for i in range(system.rows)] for j in range(system.cols)]
         self.neighbor = []
         self.known = []
@@ -274,7 +274,7 @@ class fmm(system):
             heapq.heappush(self.heap_neighbor,data)
 
 
-    def find_values(self, pedestrian = self.system.pedestrian):
+    def find_values(self, pedestrian):
         
         #param: pedestrian -> list of cells, the starting points/pedestrians.
 
