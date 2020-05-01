@@ -16,15 +16,16 @@ def initialize_system(file_name):
     cols = data['cols']
     system = model.System(cols, rows)
     for col, row in data['pedestrians']:
-        system.add_pedestrian((col, row))
+        system.add_pedestrian_at((col, row))
 
     for col, row in data['obstacles']:
-        system.add_obstacle((col, row))
+        system.add_obstacle_at((col, row))
 
     col, row = data['target']
-    target = system.add_target((col, row))
+    target = system.add_target_at((col, row))
 
     model.evaluate_cell_distance(system, target)
+    system.calc_fmm()
     return system
 
 
