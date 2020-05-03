@@ -182,6 +182,8 @@ class System:
             mask[i.row][i.col] = True
         phi = np.ma.MaskedArray(t_grid, mask)
         d = skfmm.distance(phi)
+        for j in self.pedestrian:
+            d[j.row, j.col]*=10
 
         # print(d)
 
