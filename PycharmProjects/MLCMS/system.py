@@ -103,6 +103,9 @@ class System:
         self.pedestrian = []  # Stores tuples of coordinate in the form (x: col, y: row)
         self.target: Cell = None
         self.obstacles = []  # Stores tuples of coordinate in the form (x: col, y: row)
+        self.fmm_distance = np.array([])
+        self.tt = np.array([])
+
 
         for col in self.grid:
             for cell in col:
@@ -113,6 +116,8 @@ class System:
             print("\n")
             for cell in row:
                 print(str(cell))
+
+
 
     def print_distance_utilities(self):
         for row in self.grid:
@@ -132,6 +137,17 @@ class System:
                 else:
                     print("{:05.2f}".format(cell.pedestrian_utility), end="  ")
             print()
+        print()
+
+    def print_utilities(self):
+        for row in self.grid:
+            for cell in row:
+                if cell.pedestrian_utility + cell.distance_utility >= sys.maxsize:
+                    print(" MAX ", end="  ")
+                else:
+                    print("{:05.2f}".format(cell.pedestrian_utility + cell.distance_utility), end="  ")
+            print()
+        print()
 
     def add_pedestrian_at(self, coordinates: tuple):
         # mark a pedestrian in the grid
@@ -182,15 +198,18 @@ class System:
         for ped in self.pedestrian:
             add_pedestrian_utilities(ped)
             # ped.pedestrian_utility = float(sys.maxsize)
-        self.print_pedestrian_utilities()
-        print()
+        # self.print_pedestrian_utilities()
+        # self.print_utilities()
+
+        next_cells = []
         for ped in self.pedestrian:
             next_cell = ped
-            for neighbour in ped.get_adjacent_minus_obstacles():
-                if neighbour.distance_utility + neighbour.pedestrian_utility <= next_cell.distance_utility + next_cell.pedestrian_utility:
+            for neighbour in [cell for cell in ped.get_adjacent_minus_obstacles() if cell not in next_cells + self.pedestrian]:
+                if neighbour.distance_utility + neighbour.pedestrian_utility <= next_cell.distance_utility + next_cell.pedestrian_utility and neighbour.state != PEDESTRIAN:
                     next_cell = neighbour
+                    next_cells.append(next_cell)
             ped.set_next(next_cell)
-            print(ped)
+            # print(ped)
         for ped in self.pedestrian:
             reset_pedestrian_utilities(ped)
             # ped.pedestrian_utility = float(sys.maxsize)
@@ -249,7 +268,7 @@ class System:
 
             if self.grid[path[0][0]][path[0][1]].state == PEDESTRIAN:
                 # Can be thought of as the level of patience
-                self.grid[p[0]][p[1]].wait_fmm_penalty += 0.01
+                self.grid[p[0]][p[1]].wait_fmm_penalty += 0.001
                 print(p, "--> Wait")
                 continue
             if self.grid[path[0][0]][path[0][1]] == self.target:
@@ -261,19 +280,23 @@ class System:
             # print(self.grid[self.pedestrian[0][0]][self.pedestrian[0][1]].state)
 
     def calc_fmm(self, p, wait=1):
-        t_grid = np.array(np.ones_like(self.grid), dtype=np.double)
-        mask = np.array(0 * np.ones_like(self.grid), dtype=bool)
-        t_grid[self.target.row, self.target.col] = -1
-        for i in self.obstacles:
-            mask[i.row][i.col] = True
-        phi = np.ma.MaskedArray(t_grid, mask)
-        d = skfmm.distance(phi)
-        speed = 1.3 * np.ones_like(t_grid)
-        t = skfmm.travel_time(phi, speed, dx=0.4)
+        if self.fmm_distance.size == 0:
+            t_grid = np.array(np.ones_like(self.grid), dtype=np.double)
+            mask = np.array(0 * np.ones_like(self.grid), dtype=bool)
+            t_grid[self.target.row, self.target.col] = -1
+            for i in self.obstacles:
+                mask[i.row][i.col] = True
+            phi = np.ma.MaskedArray(t_grid, mask)
+            self.fmm_distance = skfmm.distance(phi)
+            speed = 1.3 * np.ones_like(t_grid)
+            self.tt = skfmm.travel_time(phi, speed, dx=0.4)
         #print(t)
-
+        for i in self.obstacles:
+            self.fmm_distance[i.row][i.col] = sys.maxsize
+        d = np.copy(self.fmm_distance)
+        t = np.copy(self.tt)
         for j in self.pedestrian:
-            d[j.row, j.col] *= (wait + 1/d[j.row, j.col])
+            d[j.row, j.col] *= ((wait*(1 + (1/(d[j.row, j.col])*10))) + 1/d[j.row, j.col])
         return self.calc_fmm_path(d, t, p)
 
     def calc_fmm_path(self, distance, t, p):
