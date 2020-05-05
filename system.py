@@ -283,7 +283,6 @@ class System:
     def update_sys_fmm(self):
         # print(self.pedestrian_fmm)
 
-        print(self.pedestrian_fmm.sort(key = lambda x: x[]))
 
         ped = [((p[0][0], p[0][1]), p[1]) for p in self.pedestrian_fmm]
 
