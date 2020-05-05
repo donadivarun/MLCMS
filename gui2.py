@@ -19,8 +19,8 @@ def initialize_system():
     cols = data['cols']
     rows = data['rows']
     system = model.System(cols, rows)
-    for col, row in data['pedestrians']:
-        system.add_pedestrian_at(coordinates=(col, row))
+    #for col, row in data['pedestrians']:
+        #system.add_pedestrian_at(coordinates=(col, row))
 
     for col, row in data['obstacles']:
         system.add_obstacle_at(coordinates=(col, row))
@@ -33,7 +33,7 @@ def initialize_system():
         #system.print_distance_utilities()
     else:
         system.no_obstacle_avoidance()
-    system.init_fmm()
+    #system.init_fmm()
     for coord, speed in data['pedestrians_fmm']:
         system.add_pedestrian_fmm_at(coord, speed)
     # system.evaluate_cell_utilities()
